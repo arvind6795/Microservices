@@ -28,6 +28,6 @@ func (d *drink) getdrinks(rw http.ResponseWriter,r *http.Request){
 	lp:=data.GetDrinks()
 	err:=lp.ToJSON(rw)
 	if err!=nil{
-		http.Error(rw,"Unable to encode drinks data",http.StatusInternalServerError)
+		http.Error(rw,"Unable to encode data",http.StatusInternalServerError)
 	}
 }
