@@ -12,10 +12,10 @@ import (
 func main(){
 	l:=log.New(os.Stdout,"/",log.LstdFlags)
 	ph:=handlers.NewProducts(l)
-	//dh:=handlers.NewDrinks(l)
+	// dh:=handlers.NewDrinks(l)
 	sm:=http.NewServeMux()
-	sm.Handle("/products",ph)
-	//sm.Handle("/drinks",dh)
+	sm.Handle("/",ph)
+	// sm.Handle("/drinks/",dh)
 	s:=&http.Server{
 		Addr: ":9090",
 		Handler: sm,
