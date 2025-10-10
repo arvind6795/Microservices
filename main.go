@@ -30,6 +30,9 @@ func main() {
 	postRouter.HandleFunc("/", ph.Addproduct)
 	postRouter.Use(ph.MiddlewareProductValidation)
 	// sm.Handle("/drinks/",dh)
+	deleteRouter := sm.Methods(http.MethodDelete).Subrouter()
+	deleteRouter.HandleFunc("/{id:[0-9]+}", ph.DeleteProduct)
+
 	ops:=middleware.RedocOpts{SpecURL: "/swagger.yaml"}
 	sh:=middleware.Redoc(ops,nil)
 	getRouter.Handle("/docs",sh)
