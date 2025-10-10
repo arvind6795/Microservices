@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"log"
 	"microservices/product-api/data"
 	"net/http"
@@ -60,22 +61,14 @@ func (d *drink) getdrinks(rw http.ResponseWriter,r *http.Request){
 }
 func (d *drink) adddrinks(rw http.ResponseWriter,r *http.Request){
 	d.l.Println("Handle Post Drinks")
-	drin:=&data.Drink{}
-	err:=drin.FromJSON(r.Body)
-	if err!=nil{
-		http.Error(rw,"unable to unmarshal data",http.StatusBadRequest)
-	}
-	data.AddDrinks(drin)
+	drin:=r.Context().Value(keyDrink{}).(data.Drink)
+	data.AddDrinks(&drin)
 	d.l.Println("drink:%#v",drin)
 }
 func (d *drink) updateDrinks(id int,rw http.ResponseWriter,r *http.Request){
 	d.l.Println("Handle PUT Drinks")
-	drin:=&data.Drink{}
-	err:=drin.FromJSON(r.Body)
-	if err!=nil{
-		http.Error(rw,"unable to unmarshal data",http.StatusBadRequest)
-	}
-	err = data.UpdateDrink(id,drin)
+	drin:=r.Context().Value(KeyProduct{}).(data.Product)
+	err := data.UpdateProduct(id,&drin)
 	if err==data.ErrDrinkNotFound{
 		http.Error(rw,"Drink not found",http.StatusNotFound)
 		return
@@ -84,4 +77,23 @@ func (d *drink) updateDrinks(id int,rw http.ResponseWriter,r *http.Request){
 		http.Error(rw,"Drink not found",http.StatusInternalServerError)
 		return
 	}
+}
+type keyDrink struct{}
+func (p *drink) MiddlewareDrinkValidation(nxt http.Handler) http.Handler{
+	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+		drin:=data.Drink{}
+		err:=drin.FromJSON(r.Body)
+		if err!=nil{
+			p.l.Println("[ERROR] deserializing drinks",err)
+			http.Error(rw,"Error Reading Product",http.StatusBadRequest)
+			return
+		}
+		//add drinks to the context
+		ctx:=context.WithValue(r.Context(),keyDrink{},drin)
+		req:=r.WithContext(ctx)
+
+		//call nxt handler for another middleware
+		nxt.ServeHTTP(rw,req)
+
+	})
 }
