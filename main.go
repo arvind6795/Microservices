@@ -20,7 +20,7 @@ func main() {
 	// dh:=handlers.NewDrinks(l)
 	sm := mux.NewRouter()
 	getRouter := sm.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/", ph.Getproducts)
+	getRouter.HandleFunc("/products", ph.Getproducts)
 
 	putRouter := sm.Methods(http.MethodPut).Subrouter()
 	putRouter.HandleFunc("/{id:[0-9]+}", ph.UpdateProducts)

@@ -6,12 +6,6 @@ import(
 
 	"github.com/gorilla/mux"
 )
-// swagger:route DELETE /products/{id} products deleteProduct
-// Return a list of products
-// responses:
-//	201: noContent
-
-// DeleteProduct deletes a product from the database
 func (p *Product) DeleteProduct(rw http.ResponseWriter,r *http.Request){
 	//this will always convert due to router
 	vars:=mux.Vars(r)

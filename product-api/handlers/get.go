@@ -10,6 +10,7 @@ import(
 func (p *Product) Getproducts(rw http.ResponseWriter, r *http.Request){
 	p.l.Println("Handle GET Products")
 	lp:=data.GetProducts()
+	rw.Header().Set("Content-Type", "application/json")
 	err:=lp.ToJSON(rw)
 	if err!=nil{
 		http.Error(rw,"Unable to marshal json",http.StatusInternalServerError)
